@@ -1,1 +1,57 @@
 We will walk through the process of creating a SharePoint list to track IT assets with expiry dates and setting up email notifications using Power Automate to remind users when assets are nearing expiry.
+
+# Creating an IT Assets Expiry Tracker in SharePoint with Email Notifications using Power Automate
+
+## Description
+
+In this tutorial, we will walk through the process of creating a SharePoint list to track IT assets with expiry dates and setting up email notifications using Power Automate to remind users when assets are nearing expiry.
+
+## Step 1: Create a SharePoint List
+
+1. Log in to your SharePoint site and navigate to the desired location.
+2. Create a new SharePoint list named "IT Assets Expiry Tracker".
+3. Add columns to the list to capture information about IT assets, including:
+   - Name: Name of the IT asset.
+   - Domain/Link/IP: Domain, link, or IP address associated with the asset.
+   - Category: Category or type of asset (e.g., hardware, software).
+   - Vendor: Vendor or supplier of the asset.
+   - Model: Model or version of the asset.
+   - Quantity: Number of units for the asset.
+   - Location: Location where the asset is stored.
+   - Starts On: Date when the asset was acquired or put into service.
+   - Expiry On: Expiry date of the asset.
+   - Status: Calculated column to determine the status of the asset based on the expiry date.
+
+## Step 2: Configure Status Column
+
+1. Create a calculated column named "Status".
+2. Use the formula `=IF([Expiry On]<TODAY(),"Expired",IF([Expiry On]-TODAY()<=30,"Near Expiry","Valid"))` to determine the status of each asset based on its expiry date.
+3. Apply JSON formatting to visually represent different statuses with colors (e.g., red for expired, green for valid, orange for near expiry).
+
+{
+   "$schema": "https://developer.microsoft.com/json-schemas/sp/column-formatting.schema.json",
+   "elmType": "div",
+   "txtContent": "[$Status]",
+   "style": {
+      "padding": "4px",
+      "color": "#000000",
+      "font-size": "14px",
+      "font-weight": "bold",
+      "background-color": "=if(@currentField == 'Expired', '#f55b5b', if(@currentField == 'Valid', '#30b79d', if(@currentField == 'Near Expiry', '#f68f36', '')))",
+      "text-align": "center",
+      "display": "flex",
+      "align-items": "center",
+      "justify-content": "center"
+   }
+}
+
+## Step 3: Set Up Email Notifications with Power Automate
+
+1. Open Power Automate and create a new flow triggered by a scheduled recurrence (e.g., daily).
+2. Add a "Get items" action to retrieve items from the SharePoint list where the status is "Near Expiry".
+3. Configure an "Apply to each" loop to iterate through the retrieved items.
+4. Add a "Send an email" action inside the loop to notify users about the assets nearing expiry.
+5. Customize the email notification content to include relevant information about the assets.
+6. Save and test the flow to ensure that email notifications are sent successfully.
+
+By following these steps, you will have created an IT assets expiry tracker in SharePoint and set up automated email notifications using Power Automate to remind users about assets nearing expiry. This solution will help streamline asset management and ensure timely action is taken to renew or replace expiring assets.
